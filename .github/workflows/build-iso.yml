@@ -36,8 +36,8 @@ jobs:
       - name: Fehlerprotokoll anzeigen
         if: failure()
         run: |
-          msg=$(tail -n 60 build.log | tr -d '\r' | sed -e 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
-          echo "::error title=Build-Log (letzte 60 Zeilen)::$msg"
+          msg=$(tail -n 120 build.log | tr -d '\r' | sed -e 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+          echo "::error title=Build-Log (letzte 120 Zeilen)::$msg"
 
       - name: ISO zum Herunterladen bereitstellen
         uses: actions/upload-artifact@v5

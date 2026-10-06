@@ -22,6 +22,8 @@ cp -rT "$HERE/airootfs" "$PROFILE/airootfs"
 # 2) Zusätzliche Pakete
 grep -v '^\s*#' "$HERE/packages.origem" | sed '/^\s*$/d' >> "$PROFILE/packages.x86_64"
 sort -u -o "$PROFILE/packages.x86_64" "$PROFILE/packages.x86_64"
+# Pakete aus dem Grundprofil, die mit Origem-Paketen kollidieren
+sed -i -e '/^virtualbox-guest-utils-nox$/d' "$PROFILE/packages.x86_64"
 
 # 3) multilib aktivieren (für Steam / 32-Bit-Grafiktreiber)
 sed -i '/^#\[multilib\]/,/^#Include/ s/^#//' "$PROFILE/pacman.conf"
