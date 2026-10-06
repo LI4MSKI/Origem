@@ -31,6 +31,13 @@ Mausrad auf der Lautstärke in der Leiste ändert die Lautstärke.
 
 ## ISO bauen
 
+**Am einfachsten: GitHub baut sie für dich**
+
+1. Auf GitHub ein neues **öffentliches** Repository `origem` anlegen.
+2. Alle Dateien aus diesem Ordner hochladen (inkl. des Ordners `.github`).
+3. Im Tab **Actions** → *Origem ISO bauen* → **Run workflow**.
+4. Nach ca. 20–40 Minuten im fertigen Durchlauf unten bei **Artifacts** auf `origem-iso` klicken → ZIP mit der ISO.
+
 **Auf Arch Linux:**
 
 ```bash

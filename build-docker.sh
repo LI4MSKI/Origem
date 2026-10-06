@@ -4,5 +4,5 @@ set -euo pipefail
 cd "$(dirname "$0")"
 docker run --rm --privileged -v "$PWD":/origem archlinux:latest bash -c '
   pacman -Syu --noconfirm archiso &&
-  OUT=/origem/out /origem/build.sh
+  OUT=/origem/out bash /origem/build.sh
 '

@@ -1,0 +1,2 @@
+PROMPT='%F{#f2a65a}◎%f %F{#5ad1c0}%~%f '
+alias ki='ollama run llama3.2:3b'
