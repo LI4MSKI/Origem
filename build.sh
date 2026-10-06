@@ -13,7 +13,7 @@ OUT="${OUT:-$HERE/out}"
 command -v mkarchiso >/dev/null || pacman -S --needed --noconfirm archiso
 
 echo "==> Profil vorbereiten"
-rm -rf "$WORK"; mkdir -p "$WORK" "$OUT"
+mkdir -p "$WORK" "$OUT"; rm -rf "$WORK/profile" "$WORK/build"
 cp -r /usr/share/archiso/configs/releng "$PROFILE"
 
 # 1) Origem-Dateien über das Profil legen
