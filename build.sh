@@ -26,6 +26,12 @@ sort -u -o "$PROFILE/packages.x86_64" "$PROFILE/packages.x86_64"
 # 3) multilib aktivieren (für Steam / 32-Bit-Grafiktreiber)
 sed -i '/^#\[multilib\]/,/^#Include/ s/^#//' "$PROFILE/pacman.conf"
 
+# In Containern (Docker, GitHub) kann pacman den Download-Sandbox nicht nutzen
+if [[ -f /.dockerenv ]] && ! grep -q '^DisableSandbox' "$PROFILE/pacman.conf"; then
+  sed -i '/^\[options\]/a DisableSandbox' "$PROFILE/pacman.conf"
+  sed -i 's/^CheckSpace/#CheckSpace/' "$PROFILE/pacman.conf"
+fi
+
 # 4) Name, Version, Rechte
 sed -i \
   -e 's/^iso_name=.*/iso_name="origem"/' \
@@ -49,7 +55,7 @@ ln -sf /usr/lib/systemd/system/vboxservice.service "$WANTS/vboxservice.service"
 ln -sf /etc/systemd/system/origem-live-user.service "$WANTS/origem-live-user.service"
 
 # 6) Bootmenü umbenennen
-grep -rl "Arch Linux install medium" "$PROFILE"/{efiboot,syslinux,grub} 2>/dev/null \
+{ grep -rl "Arch Linux install medium" "$PROFILE"/{efiboot,syslinux,grub} 2>/dev/null || true; } \
   | xargs -r sed -i 's/Arch Linux install medium/Origem Live/g'
 
 echo "==> ISO bauen (dauert je nach Internet 10–40 Minuten)"

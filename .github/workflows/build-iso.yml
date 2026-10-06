@@ -17,18 +17,30 @@ jobs:
           df -h /
 
       - name: Projekt holen
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: ISO im Arch-Linux-Container bauen
         run: |
+          set -o pipefail
           docker run --rm --privileged -v "$PWD":/origem archlinux:latest bash -c '
-            pacman -Syu --noconfirm archiso &&
+            set -e
+            sed -i "/^\[options\]/a DisableSandbox" /etc/pacman.conf
+            sed -i "s/^CheckSpace/#CheckSpace/" /etc/pacman.conf
+            pacman-key --init
+            pacman-key --populate archlinux
+            pacman -Syu --noconfirm archiso
             WORK=/origem/work OUT=/origem/out bash /origem/build.sh
-          '
+          ' 2>&1 | tee build.log
           ls -lh out/
 
+      - name: Fehlerprotokoll anzeigen
+        if: failure()
+        run: |
+          msg=$(tail -n 60 build.log | tr -d '\r' | sed -e 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+          echo "::error title=Build-Log (letzte 60 Zeilen)::$msg"
+
       - name: ISO zum Herunterladen bereitstellen
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: origem-iso
           path: out/*.iso
