@@ -14,7 +14,8 @@ jobs:
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL /usr/local/share/boost
           sudo docker image prune -af
-          df -h /
+          sudo mkdir -p /mnt/origem/work /mnt/origem/pkg /mnt/origem/out
+          df -h / /mnt
 
       - name: Projekt holen
         uses: actions/checkout@v5
@@ -22,27 +23,38 @@ jobs:
       - name: ISO im Arch-Linux-Container bauen
         run: |
           set -o pipefail
-          docker run --rm --privileged -v "$PWD":/origem archlinux:latest bash -c '
-            set -e
-            sed -i "/^\[options\]/a DisableSandbox" /etc/pacman.conf
-            sed -i "s/^CheckSpace/#CheckSpace/" /etc/pacman.conf
-            pacman-key --init
-            pacman-key --populate archlinux
-            pacman -Syu --noconfirm archiso
-            WORK=/origem/work OUT=/origem/out bash /origem/build.sh
-          ' 2>&1 | tee build.log
-          ls -lh out/
+          docker run --rm --privileged \
+            -v "$PWD":/origem \
+            -v /mnt/origem/work:/work \
+            -v /mnt/origem/pkg:/var/cache/pacman/pkg \
+            -v /mnt/origem/out:/out \
+            archlinux:latest bash -c '
+              set -e
+              sed -i "/^\[options\]/a DisableSandbox" /etc/pacman.conf
+              sed -i "s/^CheckSpace/#CheckSpace/" /etc/pacman.conf
+              pacman-key --init
+              pacman-key --populate archlinux
+              pacman -Syu --noconfirm archiso
+              WORK=/work OUT=/out bash /origem/build.sh
+            ' 2>&1 | grep --line-buffered -v ' downloading\.\.\.$' | tee build.log
+          ls -lh /mnt/origem/out/
 
       - name: Fehlerprotokoll anzeigen
         if: failure()
         run: |
-          msg=$(tail -n 120 build.log | tr -d '\r' | sed -e 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
-          echo "::error title=Build-Log (letzte 120 Zeilen)::$msg"
+          df -h / /mnt
+          report() {
+            msg=$(cat | tr -d '\r' | cut -c1-200 | sed -e 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+            echo "::error title=$1::$msg"
+          }
+          grep -inE 'error|fehler|failed|warning: |no space|conflict|not found|cannot|unable' build.log | tail -n 25 | report "Fehlerzeilen"
+          tail -n 25 build.log | report "Letzte Zeilen"
+          df -h / /mnt | report "Speicherplatz"
 
       - name: ISO zum Herunterladen bereitstellen
         uses: actions/upload-artifact@v5
         with:
           name: origem-iso
-          path: out/*.iso
+          path: /mnt/origem/out/*.iso
           compression-level: 0
           retention-days: 14
