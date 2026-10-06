@@ -1,0 +1,4 @@
+#!/bin/sh
+# Startet die Origem-Oberfläche (Layer-Shell muss vor GTK geladen werden)
+export LD_PRELOAD=/usr/lib/libgtk4-layer-shell.so
+exec python3 /usr/lib/origem/shell.py "$@"

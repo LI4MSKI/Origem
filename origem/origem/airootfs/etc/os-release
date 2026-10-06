@@ -1,0 +1,8 @@
+NAME="Origem"
+PRETTY_NAME="Origem"
+ID=origem
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;242;166;90"
+HOME_URL="https://github.com/LI4MSKI"
+LOGO=origem

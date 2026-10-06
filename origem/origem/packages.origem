@@ -1,0 +1,49 @@
+# Pakete, die Origem zusätzlich zum Arch-Grundsystem mitbringt
+
+# --- Oberfläche ---
+hyprland
+xdg-desktop-portal-hyprland
+gtk4
+gtk4-layer-shell
+python
+python-gobject
+kitty
+thunar
+pavucontrol
+polkit
+sudo
+polkit-gnome
+inter-font
+noto-fonts
+noto-fonts-emoji
+papirus-icon-theme
+adwaita-icon-theme
+
+# --- Audio ---
+pipewire
+pipewire-pulse
+wireplumber
+
+# --- Grafik (AMD/Intel; NVIDIA siehe README) ---
+mesa
+vulkan-radeon
+vulkan-intel
+lib32-mesa
+lib32-vulkan-radeon
+lib32-vulkan-intel
+
+# --- Virtuelle Maschinen ---
+virtualbox-guest-utils
+
+# --- Gaming ---
+steam
+gamemode
+lib32-gamemode
+mangohud
+
+# --- KI ---
+ollama
+
+# --- Alltag ---
+firefox
+firefox-i18n-de
